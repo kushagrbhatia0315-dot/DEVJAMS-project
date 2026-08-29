@@ -1,16 +1,11 @@
-* streamlit
-* fastapi
-* pandas
-* numpy
-* scikit-learn (sklearn)
-* xgboost
-* joblib
-* matplotlib
-* seaborn
-* plotly
-* os
-* sqlite3
-* glob
-* io
-* subprocess
-* sys
+streamlit
+fastapi
+pandas
+numpy
+scikit-learn
+xgboost
+joblib
+matplotlib
+seaborn
+plotly
+kagglehub
