@@ -7,7 +7,6 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.utils.class_weight import compute_sample_weight
 
 def train_and_predict(X_train, y_train, X_test, save_path: str):
-    """Trains the XGBoost algorithm and saves it and the encoder to disk."""
     print("--> [4/5] Training XGBoost with Engineered Data...")
     le = LabelEncoder()
     y_train_encoded = le.fit_transform(y_train)
@@ -30,7 +29,6 @@ def train_and_predict(X_train, y_train, X_test, save_path: str):
     return predictions_strings
 
 def predict_fall_2026_scenario(save_path: str, training_columns: list, merged_df: pd.DataFrame):
-    """Generates Fall 2026 forecasts using real historical state/month metrics."""
     print("--> Forecasting Fall 2026 Scenarios...")
     artifacts = joblib.load(save_path)
     model = artifacts['model']
