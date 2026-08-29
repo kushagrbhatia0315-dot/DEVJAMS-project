@@ -17,7 +17,6 @@ STATE_MAP = {
 }
 
 def merge_and_engineer(wf_df: pd.DataFrame, storm_df: pd.DataFrame, target_col: str):
-    """Aligns calendars, maps spatial/temporal features, and merges datasets."""
     print("--> [3/5] Merging Datasets & Engineering Features...")
     wf_df = wf_df[wf_df[target_col] != 'Missing/Undefined'].dropna().copy()
     wf_df['MONTH'] = pd.to_datetime(
@@ -47,7 +46,6 @@ def merge_and_engineer(wf_df: pd.DataFrame, storm_df: pd.DataFrame, target_col: 
     return merged_df
 
 def prepare_for_ml(df: pd.DataFrame, target_col: str, test_size: float):
-    """One-Hot Encodes text and splits into Train/Test chunks."""
     y = df[target_col]
     X_raw = df.drop(columns=[target_col])
     X = pd.get_dummies(X_raw)
