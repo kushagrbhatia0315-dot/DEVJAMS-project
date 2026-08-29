@@ -4,13 +4,11 @@ import os
 import glob
 
 def extract_wildfires(db_path: str, limit: int, features: list, target: str) -> pd.DataFrame:
-    """Extracts Wildfire data from SQLite."""
     print("--> [1/5] Extracting Wildfire Database...")
     if not os.path.exists(db_path):
         raise FileNotFoundError(f"Missing Database: {db_path}")
     
     columns = ", ".join(features + [target])
-    # Force overlap with storms dataset (1996 onwards)
     query = f"SELECT {columns} FROM Fires WHERE FIRE_YEAR >= 1996 LIMIT {limit};"
     
     with sqlite3.connect(db_path) as conn:
