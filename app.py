@@ -168,8 +168,8 @@ with tab5:
             }])
  
             X_input_raw = input_df.drop(columns=['MONTH'], errors='ignore')
-            X_input = pd.get_dummies(X_input_raw)
-
+            X_input = pd.get_dummies(input_df)
+            
             expected_cols = model.feature_names_in_
             X_input = X_input.reindex(columns=expected_cols, fill_value=0)
      
