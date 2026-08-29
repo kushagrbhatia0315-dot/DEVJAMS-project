@@ -42,7 +42,7 @@ if st.button("Run Machine Learning Pipeline"):
             X_train, y_train, X_test, config.MODEL_SAVE_PATH
         )
         
-   with st.spinner("4. Generating Web Results..."):
+    with st.spinner("4. Generating Web Results..."):
         acc, fig, matrix = evaluate_and_plot(y_test, predictions, config.PLOT_SAVE_PATH)
         
         # Display the Accuracy and the Graph on the website
