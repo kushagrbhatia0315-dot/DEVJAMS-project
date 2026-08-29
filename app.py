@@ -9,7 +9,7 @@ from src.evaluator import evaluate_and_plot, plot_wildfires_vs_storms_per_year, 
 
 st.set_page_config(page_title="Wildfire & Storm Predictor", layout="wide")
 
-st.title("🔥 Wildfire & Storms AI Predictor")
+st.title("Wildfire & Storms AI Predictor")
 st.write("This web application merges US Storms data with Wildfire records to map disasters and predict fire causes.")
 
 if st.button("Run Machine Learning Pipeline"):
@@ -69,6 +69,7 @@ if 'merged_df' in st.session_state:
     st.subheader("🍂 Fall 2026 Predictive Scenarios (Sep - Nov)")
     st.write("Forecasted fire causes based on state-specific historical median fire sizes and storm counts.")
     st.dataframe(st.session_state['forecast_df'], use_container_width=True)
-if _name_ == "_main_":
+if __name__ == "__main__":
     if not st.runtime.exists():
-        subprocess.run(["streamlit", "run", _file_, "--server.port", "8000"])
+        subprocess.run(["streamlit", "run", __file__, "--server.port", "8000"])
+
