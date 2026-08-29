@@ -139,8 +139,7 @@ The pipeline includes a module to generate synthesized fire-risk scenarios for *
 ---
 
 ## 👥 Team / Contributor
--Kushagr Bhatia   (26BIT0109)
-
--Prince Choudhary (26BIT0107)
+ Kushagr Bhatia   (26BIT0109)
+ Prince Choudhary (26BIT0107)
 -
 -
