@@ -13,12 +13,13 @@ def train_and_predict(X_train, y_train, X_test, save_path: str):
     y_train_encoded = le.fit_transform(y_train)
     sample_weights = compute_sample_weight(class_weight='balanced', y=y_train)
     model = XGBClassifier(
-        n_estimators=200, 
+        n_estimators=30, 
         max_depth=8, 
         learning_rate=0.1, 
         n_jobs=-1, 
         random_state=42,
-        eval_metric='mlogloss'
+        eval_metric='mlogloss',
+        verbosity=1
     )
     model.fit(X_train, y_train_encoded, sample_weight=sample_weights)
     os.makedirs(os.path.dirname(save_path), exist_ok=True)
