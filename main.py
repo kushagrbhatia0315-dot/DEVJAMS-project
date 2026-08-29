@@ -12,4 +12,9 @@ def main():
   try:
     wf_df = extract_wildfires(config.WILDFIRE_DB, config.ROW_LIMIT, config.WF_FEATURES, config.WF_TARGET)
     storm_df = extract_storms(config.STORMS_DIR, config.STORM_FEATURES)
+
+    merged_df = merge_and_engineer(wf_df, storm_df, config.WF_TARGET)
     
+    X_train, X_test, y_train, y_test = prepare_for_ml(df=merged_df, target_col=config.WF_TARGET, test_size=config.TEST_SIZE, random_seed=config.RANDOM_SEED)
+    
+evaluate_and_plot(y_test, predictions, config.PLOT_SAVE_PATH)
