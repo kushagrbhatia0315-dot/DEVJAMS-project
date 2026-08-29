@@ -10,7 +10,6 @@ from src.engineer import merge_and_engineer, prepare_for_ml
 from src.modeler import train_and_predict, predict_fall_2026_scenario
 from src.evaluator import evaluate_and_plot, plot_wildfires_vs_storms_per_year, plot_us_disaster_map, create_gauge
 
-# 1. Catchy Bright UI Config & Custom CSS
 st.set_page_config(page_title="Wildfire & Storm Predictor", layout="wide", initial_sidebar_state="expanded")
 
 st.markdown("""
@@ -45,7 +44,6 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# 2. Instant Data Caching Engine
 @st.cache_data(show_spinner=False)
 def load_and_prep_data():
     wf_df = extract_wildfires(config.WILDFIRE_DB, config.ROW_LIMIT, config.WF_FEATURES, config.WF_TARGET)
@@ -65,7 +63,6 @@ with st.spinner("Initializing Datasets & AI Model..."):
     wf_df, storm_df, merged_df = load_and_prep_data()
     acc, fig_matrix, forecast_df = run_model_pipeline(merged_df)
 
-# 3. Sidebar UI
 with st.sidebar:
     st.title("⚙️ Dashboard Controls")
     st.markdown("---")
@@ -76,11 +73,9 @@ with st.sidebar:
     st.markdown("---")
     st.write("🔄 **System Status:** Active & Cached")
 
-# 4. Top-Line KPI Metrics with Speedometers
 st.title("🔥 US Disaster AI & Spatial Analytics")
 st.write("Visualizing the relationship between extreme weather and historical wildfire patterns in a vibrant workspace.")
 
-# Calculate stats for gauges
 fires_this_year = len(wf_df[wf_df['FIRE_YEAR'] == selected_year])
 storms_this_year = len(storm_df[storm_df['YEAR'] == selected_year])
 max_fires = wf_df.groupby('FIRE_YEAR').size().max()
@@ -96,7 +91,6 @@ with col3:
 
 st.markdown("---")
 
-# 5. Restructured Tabbed Layout
 tab1, tab2, tab3, tab4 = st.tabs([
     "🎯 AI Confusion Matrix", 
     "🗺️ USA Boundary Map", 
@@ -106,7 +100,6 @@ tab1, tab2, tab3, tab4 = st.tabs([
 ])
 
 with tab1:
-    # Dedicated huge tab for the matrix to make it highly visible
     st.markdown("### Model Performance Breakdown")
     st.write("This matrix evaluates how accurately the AI identifies specific wildfire causes based strictly on weather/storm patterns.")
     st.plotly_chart(fig_matrix, use_container_width=True)
@@ -134,8 +127,7 @@ with tab4:
 with tab5:
     st.markdown("### 🎮 Interactive Wildfire Cause Predictor")
     st.write("Adjust the environmental factors below to see what the AI predicts as the most likely cause.")
-    
-    # Cache loading the model so it doesn't freeze the UI
+
     @st.cache_resource(show_spinner=False)
     def load_cached_model():
         if os.path.exists(config.MODEL_SAVE_PATH):
@@ -147,11 +139,9 @@ with tab5:
     if artifacts:
         model = artifacts['model']
         le = artifacts['encoder']
-        
-        # 1. Create the UI Layout
+     
         col_a, col_b, col_c, col_d = st.columns(4)
         with col_a:
-            # Get available states dynamically from merged data
             available_states = sorted(merged_df['STATE'].dropna().unique())
             input_state = st.selectbox("State", available_states, index=available_states.index('CA') if 'CA' in available_states else 0)
         with col_b:
@@ -162,43 +152,36 @@ with tab5:
             input_storms = st.number_input("Monthly Storms in State", min_value=0, max_value=500, value=15, step=1)
             
         if st.button("🚀 Run AI Prediction", use_container_width=True):
-            # 2. Grab median Lat/Lon for the selected state so the model has realistic coordinates
             state_data = merged_df[merged_df['STATE'] == input_state]
             med_lat = state_data['LAT_ROUNDED'].median() if not state_data.empty else 39.8
             med_lon = state_data['LON_ROUNDED'].median() if not state_data.empty else -98.6
 
-            # 3. Build the dataframe format the model expects
             input_df = pd.DataFrame([{
                 'MONTH': input_month,
                 'MONTH_SIN': np.sin(2 * np.pi * input_month / 12.0),
                 'MONTH_COS': np.cos(2 * np.pi * input_month / 12.0),
                 'STATE': input_state,
-                'LOG_FIRE_SIZE': np.log1p(input_fire_size), # Model expects Log scaled size
+                'LOG_FIRE_SIZE': np.log1p(input_fire_size), 
                 'MONTHLY_STORMS': input_storms,
                 'LAT_ROUNDED': med_lat,
                 'LON_ROUNDED': med_lon
             }])
-            
-            # 4. Apply One-Hot Encoding just like during training
+ 
             X_input_raw = input_df.drop(columns=['MONTH'], errors='ignore')
             X_input = pd.get_dummies(X_input_raw)
-            
-            # Align columns perfectly with the trained XGBoost model
+
             expected_cols = model.feature_names_in_
             X_input = X_input.reindex(columns=expected_cols, fill_value=0)
-            
-            # 5. Make Predictions
+     
             pred_encoded = model.predict(X_input)[0]
             predicted_cause = le.inverse_transform([pred_encoded])[0]
             probs = model.predict_proba(X_input)[0]
-            
-            # Get top 4 probabilities
+ 
             prob_df = pd.DataFrame({
                 'Cause': le.inverse_transform(range(len(probs))),
                 'Probability (%)': probs * 100
             }).sort_values('Probability (%)', ascending=False).head(4)
-            
-            # 6. Render Results
+ 
             st.success(f"### 🎯 Top Predicted Cause: **{predicted_cause}**")
             
             fig_probs = px.bar(
@@ -210,7 +193,6 @@ with tab5:
                 color_continuous_scale='Teal',
                 title="AI Confidence Breakdown"
             )
-            # Make chart look native to your current bright UI theme
             fig_probs.update_layout(
                 yaxis={'categoryorder':'total ascending'}, 
                 plot_bgcolor='rgba(255,255,255,0.5)', 
