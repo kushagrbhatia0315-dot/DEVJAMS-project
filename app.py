@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+import subprocess
 from src import config
 from src.ingestor import extract_wildfires,extract_storms
 from src.engineer import merge_and_engineer,prepare_for_ml
@@ -25,3 +26,6 @@ if st.button("Run Machine Learning Pipeline"):
         st.success(f" Pipeline Complete! Model Accuracy: {round(acc * 100, 2)}%") 
         st.subheader("Prediction Confusion Matrix")
         st.pyplot(fig)
+if __name__ == "__main__":
+    if not st.runtime.exists():
+        subprocess.run(["streamlit", "run", __file__, "--server.port", "8000"])
