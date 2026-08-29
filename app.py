@@ -5,3 +5,7 @@ from src.ingestor import extract_wildfires,extract_storms
 from src.engineer import merge_and_engineer,prepare_for_ml
 from src.modeler import train_and_predict
 from src.evaluator import evaluate_and_plot
+
+st.set_page_config(page_title="Wildfire AI Predictor",layout="wide")
+st.title("Wildfire & Strom AI Predictor")
+st.write("This web application merges 24 years of US Storms data with 1.88 MIllion Wildfires to predict fire causes.")
