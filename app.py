@@ -46,7 +46,7 @@ if 'merged_df' in st.session_state:
     st.success(f"✅ Pipeline Active! Model Accuracy: {round(st.session_state['acc'] * 100, 2)}%")
     
     st.subheader("🗺️ Interactive US Disaster Map")
-    st.write("Select a year to display Wildfires (Red) and Storms (White) geographically.")
+    st.write("Select a year to display Wildfires (Red) and Storms (Blue) geographically.")
     
     min_year = int(st.session_state['wf_df']['FIRE_YEAR'].min())
     max_year = int(st.session_state['wf_df']['FIRE_YEAR'].max())
