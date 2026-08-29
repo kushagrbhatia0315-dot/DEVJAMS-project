@@ -42,14 +42,35 @@ if st.button("Run Machine Learning Pipeline"):
             X_train, y_train, X_test, config.MODEL_SAVE_PATH
         )
         
-    with st.spinner("4. Generating Web Results..."):
+   with st.spinner("4. Generating Web Results..."):
         acc, fig, matrix = evaluate_and_plot(y_test, predictions, config.PLOT_SAVE_PATH)
         
         # Display the Accuracy and the Graph on the website
         st.success(f"✅ Pipeline Complete! Model Accuracy: {round(acc * 100, 2)}%")
         
         st.subheader("🎯 Prediction Confusion Matrix")
-        st.pyplot(fig)
+        
+        # Create a 2-column layout: Graph on the left (75% width), Table on the right (25% width)
+        col1, col2 = st.columns([3, 1])
+        
+        with col1:
+            st.pyplot(fig)
+            
+        with col2:
+            st.write("**Matrix Legend (0-8)**")
+            
+            # Scikit-learn sorts the classes alphabetically behind the scenes
+            # We extract that exact sorted list from your test data
+            class_labels = sorted(y_test.unique())
+            
+            # Create a dataframe to map the numbers to the actual text
+            legend_df = pd.DataFrame({
+                "Matrix ID": range(len(class_labels)),
+                "Fire Cause": class_labels
+            })
+            
+            # Display the table, hiding the default pandas index
+            st.dataframe(legend_df, hide_index=True, use_container_width=True)
 
 # --- THE PLAY BUTTON FIX ---
 # Fixed the missing double underscores for Python magic variables
