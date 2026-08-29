@@ -5,7 +5,7 @@ from sklearn.ensemble import RandomForestClassifier
 def train_and_predict(X_train, y_train, X_test, save_path: str):
     """Trains the algorithm and saves it to disk."""
     print("--> [4/5] Training Random Forest with Merged Data...")
-    model = RandomForestClassifier(n_estimators=100, max_depth=15, n_jobs=-1)
+    model = RandomForestClassifier(n_estimators=200, max_depth=20,class_weight='balanced',n_jobs=-1,random_state=42)
     model.fit(X_train, y_train)
     os.makedirs(os.path.dirname(save_path), exist_ok=True)
     joblib.dump(model, save_path)
