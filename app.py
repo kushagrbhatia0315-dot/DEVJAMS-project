@@ -1,4 +1,5 @@
 import streamlit as st
+import os
 import pandas as pd
 import joblib
 import numpy as np
@@ -91,7 +92,7 @@ with col3:
 
 st.markdown("---")
 
-tab1, tab2, tab3, tab4 = st.tabs([
+tab1, tab2, tab3, tab4,tab5 = st.tabs([
     "🎯 AI Confusion Matrix", 
     "🗺️ USA Boundary Map", 
     "📈 Analytics & Analytics", 
