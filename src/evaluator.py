@@ -47,7 +47,7 @@ def plot_wildfires_vs_storms_per_year(wf_df: pd.DataFrame, storm_df: pd.DataFram
     width = 0.35 
     
     ax.bar(x - width/2, merged['Wildfires'], width, label='Wildfires', color='#d95f02', edgecolor='black')
-    ax.bar(x + width/2, merged['Storms'], width, label='Storms', color='#1f78b4', edgecolor='black')
+    ax.bar(x + width/2, merged['Storms'], width, label='Storms', color='#17a3f4', edgecolor='black')
     ax.set_title('Annual Occurrences: Wildfires vs. Storms', pad=20, fontsize=16, fontweight='bold')
     ax.set_xlabel('Year', fontsize=12, labelpad=10)
     ax.set_ylabel('Total Events Count', fontsize=12, labelpad=10)
@@ -89,9 +89,9 @@ def plot_us_disaster_map(wf_df: pd.DataFrame, storm_df: pd.DataFrame, selected_y
         lon='lon',
         color='Type',
         hover_data=['Details'],
-        color_discrete_map={'Wildfire': 'red', 'Storm': 'white'},
+        color_discrete_map={'Wildfire': 'red', 'Storm': 'blue'},
         scope='usa',
-        title=f'US Disaster Map ({selected_year}): Red = Wildfire | White = Storm'
+        title=f'US Disaster Map ({selected_year}): Red = Wildfire | Blue = Storm'
     )
     
     fig.update_layout(
