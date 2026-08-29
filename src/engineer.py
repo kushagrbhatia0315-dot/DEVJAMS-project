@@ -49,7 +49,7 @@ def merge_and_engineer(wf_df: pd.DataFrame, storm_df: pd.DataFrame, target_col: 
     
     return merged_df
 
-def prepare_for_ml(df: pd.DataFrame, target_col: str, test_size: float, random_seed: int):
+def prepare_for_ml(df: pd.DataFrame, target_col: str, test_size: float):
     """One-Hot Encodes text and splits into Train/Test chunks."""
     y = df[target_col]
     X_raw = df.drop(columns=[target_col])
@@ -57,4 +57,5 @@ def prepare_for_ml(df: pd.DataFrame, target_col: str, test_size: float, random_s
     # Convert 'STATE' into numbers
     X = pd.get_dummies(X_raw)
     
-    return train_test_split(X, y, test_size=test_size, random_state=random_seed)
+    # Random state removed to ensure different splits every run
+    return train_test_split(X, y, test_size=test_size)
