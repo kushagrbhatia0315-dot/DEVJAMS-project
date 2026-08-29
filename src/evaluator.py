@@ -9,8 +9,7 @@ from sklearn.metrics import accuracy_score, confusion_matrix
 def evaluate_and_plot(y_test, predictions, save_path: str):
     acc = accuracy_score(y_test, predictions)
     matrix = confusion_matrix(y_test, predictions)
-    
-    # Extract actual text labels alphabetically to fix the 0-8 ambiguity
+
     labels = sorted(y_test.unique())
     
     fig, ax = plt.subplots(figsize=(12, 10))
@@ -64,12 +63,10 @@ def plot_wildfires_vs_storms_per_year(wf_df: pd.DataFrame, storm_df: pd.DataFram
     return fig
 
 def plot_us_disaster_map(wf_df: pd.DataFrame, storm_df: pd.DataFrame, selected_year: int):
-    """Renders an interactive US map showing Wildfires (Red) and Storms (White) for a chosen year."""
-    # Filter datasets by selected year
+ 
     wf_filtered = wf_df[wf_df['FIRE_YEAR'] == selected_year].copy()
     storm_filtered = storm_df[storm_df['YEAR'] == selected_year].copy()
 
-    # Format Wildfires data frame
     wf_map = pd.DataFrame({
         'lat': wf_filtered['LATITUDE'],
         'lon': wf_filtered['LONGITUDE'],
@@ -77,7 +74,6 @@ def plot_us_disaster_map(wf_df: pd.DataFrame, storm_df: pd.DataFrame, selected_y
         'Details': wf_filtered['STAT_CAUSE_DESCR']
     }).dropna()
 
-    # Format Storms data frame
     storm_map = pd.DataFrame({
         'lat': storm_filtered['BEGIN_LAT'],
         'lon': storm_filtered['BEGIN_LON'],
