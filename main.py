@@ -5,6 +5,7 @@ from src.ingestor import extract_wildfires, extract_storms
 from src.engineer import merge_and_engineer, prepare_for_ml
 from src.modeler import train_and_predict, predict_fall_2026_scenario
 from src.evaluator import evaluate_and_plot, plot_wildfires_vs_storms_per_year
+
 def main():
     print("="*55)
     print(" STARTING WILDFIRE & STORM PREDICTION PIPELINE")
@@ -20,14 +21,18 @@ def main():
         predictions = train_and_predict(
             X_train=X_train, y_train=y_train, X_test=X_test, save_path=config.MODEL_SAVE_PATH
         )
-        forecast_df = predict_fall_2026_scenario(config.MODEL_SAVE_PATH, X_train.columns)
+        forecast_df = predict_fall_2026_scenario(config.MODEL_SAVE_PATH, X_train.columns, merged_df)
         forecast_df.to_csv("api_2026_forecast.csv", index=False)
         print("--> [API EXTRACT] Saved api_2026_forecast.csv for the server...")
         results_df = pd.DataFrame({'y_test': y_test, 'predictions': predictions})
         results_df.to_csv("api_predictions.csv", index=False)
         evaluate_and_plot(y_test, predictions, config.PLOT_SAVE_PATH)
+        plot_wildfires_vs_storms_per_year(wf_df, storm_df, config.BAR_GRAPH_SAVE_PATH)
+        print("--> [PIPELINE SUCCESS] All tasks completed successfully.")
+        
     except Exception as e:
         print(f"\n[!] PIPELINE FAILED: {e}")
         sys.exit(1)
-if __name__ == "__main__":
+
+if _name_ == "_main_":
     main()
