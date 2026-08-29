@@ -17,4 +17,9 @@ def main():
     
     X_train, X_test, y_train, y_test = prepare_for_ml(df=merged_df, target_col=config.WF_TARGET, test_size=config.TEST_SIZE, random_seed=config.RANDOM_SEED)
     
-evaluate_and_plot(y_test, predictions, config.PLOT_SAVE_PATH)
+    evaluate_and_plot(y_test, predictions, config.PLOT_SAVE_PATH)
+    except Exception as e:
+        print(f"\n[!] PIPELINE FAILED: {e}")
+        sys.exit(1)
+if _name_ == "_main_":
+   main()
