@@ -41,7 +41,6 @@ def plot_disasters_by_year():
     return Response(content=get_plot_bytes(), media_type="image/png")
 @app.get("/data/fall-2026-forecast")
 def get_2026_forecast():
-    """Returns the hypothetical predicted fire causes for Fall 2026."""
     if not os.path.exists("api_2026_forecast.csv"):
         raise HTTPException(status_code=404, detail="Forecast not found. Run main.py first.")    
     df = pd.read_csv("api_2026_forecast.csv")
