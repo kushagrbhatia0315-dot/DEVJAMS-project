@@ -8,7 +8,7 @@ def extract_wildfires(db_path: str, limit: int, features: list, target: str) -> 
     if not os.path.exists(db_path):
         raise FileNotFoundError(f"Missing Database: {db_path}")
     columns = ", ".join(features + [target])
-    query = f"SELECT {columns} FROM Fires WHERE FIRE_YEAR >= 1996 LIMIT {limit};"
+    query = f"SELECT {columns} FROM Fires WHERE FIRE_YEAR >= 1996 ORDER BY RANDOM() LIMIT {limit};"
     with sqlite3.connect(db_path) as conn:
         df = pd.read_sql_query(query, conn)
     return df
