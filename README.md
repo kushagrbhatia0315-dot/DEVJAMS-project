@@ -138,18 +138,8 @@ The pipeline includes a module to generate synthesized fire-risk scenarios for *
 
 ---
 
-## 🤝 Contributing
-
-Contributions are welcome! Please open an issue to discuss major changes before submitting a pull request.
-
----
-
-## 📄 License
-
-*(Add a license, e.g., MIT, if you want others to reuse this code.)*
-
----
-
-## 👥 Team / Contributors
-
-*(Add names and roles here — built for DEVJAMS hackathon.)*
+## 👥 Team / Contributor
+-Prince Choudhary (26BIT0107)
+-
+-
+-
