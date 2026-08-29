@@ -1,5 +1,7 @@
 import pandas as pd
+import numpy as np
 from sklearn.model_selection import train_test_split
+
 STATE_MAP = {
     "ALABAMA": "AL", "ALASKA": "AK", "ARIZONA": "AZ", "ARKANSAS": "AR", "CALIFORNIA": "CA",
     "COLORADO": "CO", "CONNECTICUT": "CT", "DELAWARE": "DE", "FLORIDA": "FL", "GEORGIA": "GA",
@@ -13,13 +15,15 @@ STATE_MAP = {
     "TEXAS": "TX", "UTAH": "UT", "VERMONT": "VT", "VIRGINIA": "VA", "WASHINGTON": "WA",
     "WEST VIRGINIA": "WV", "WISCONSIN": "WI", "WYOMING": "WY"
 }
+
 def merge_and_engineer(wf_df: pd.DataFrame, storm_df: pd.DataFrame, target_col: str):
-    """Aligns calendars, counts storm events, and merges the datasets."""
+    """Aligns calendars, maps spatial/temporal features, and merges datasets."""
     print("--> [3/5] Merging Datasets & Engineering Features...")
-    wf_df = wf_df[wf_df[target_col] != 'Missing/Undefined'].dropna()
-    wf_df['MONTH'] = (wf_df['DISCOVERY_DOY'] / 30.5).astype(int) + 1
-    wf_df['MONTH'] = wf_df['MONTH'].clip(1, 12)
-    wf_df = wf_df.drop(columns=['DISCOVERY_DOY'])
+    wf_df = wf_df[wf_df[target_col] != 'Missing/Undefined'].dropna().copy()
+    wf_df['MONTH'] = pd.to_datetime(
+        wf_df['FIRE_YEAR'] * 1000 + wf_df['DISCOVERY_DOY'], 
+        format='%Y%j'
+    ).dt.month
     storm_df['STATE'] = storm_df['STATE'].str.upper().map(STATE_MAP)
     month_map = {'January': 1, 'February': 2, 'March': 3, 'April': 4, 'May': 5, 'June': 6, 
                  'July': 7, 'August': 8, 'September': 9, 'October': 10, 'November': 11, 'December': 12}
@@ -32,12 +36,20 @@ def merge_and_engineer(wf_df: pd.DataFrame, storm_df: pd.DataFrame, target_col: 
         how='left'
     )
     merged_df['MONTHLY_STORMS'] = merged_df['MONTHLY_STORMS'].fillna(0)
-    merged_df = merged_df.drop(columns=['YEAR']) 
+    merged_df['MONTH_SIN'] = np.sin(2 * np.pi * merged_df['MONTH'] / 12.0)
+    merged_df['MONTH_COS'] = np.cos(2 * np.pi * merged_df['MONTH'] / 12.0)
+    merged_df['LAT_ROUNDED'] = merged_df['LATITUDE'].round(1)
+    merged_df['LON_ROUNDED'] = merged_df['LONGITUDE'].round(1)
+    merged_df['LOG_FIRE_SIZE'] = np.log1p(merged_df['FIRE_SIZE'])
+    cols_to_drop = ['DISCOVERY_DOY', 'YEAR', 'FIRE_YEAR', 'LATITUDE', 'LONGITUDE', 'FIRE_SIZE']
+    merged_df = merged_df.drop(columns=cols_to_drop, errors='ignore')
+    
     return merged_df
+
 def prepare_for_ml(df: pd.DataFrame, target_col: str, test_size: float):
     """One-Hot Encodes text and splits into Train/Test chunks."""
     y = df[target_col]
     X_raw = df.drop(columns=[target_col])
     X = pd.get_dummies(X_raw)
 
-    return train_test_split(X, y, test_size=test_size)
+    return train_test_split(X, y, test_size=test_size, random_state=42)
