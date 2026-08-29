@@ -1,5 +1,8 @@
 import streamlit as st
 import pandas as pd
+import joblib
+import numpy as np
+import plotly.express as px
 import subprocess
 from src import config
 from src.ingestor import extract_wildfires, extract_storms
@@ -98,7 +101,8 @@ tab1, tab2, tab3, tab4 = st.tabs([
     "🎯 AI Confusion Matrix", 
     "🗺️ USA Boundary Map", 
     "📈 Analytics & Analytics", 
-    "🔮 Fall 2026 Forecast"
+    "🔮 Fall 2026 Forecast",
+    "🎮 Live Predictor"
 ])
 
 with tab1:
@@ -126,6 +130,97 @@ with tab4:
     st.markdown("### 🍂 Predictive AI Scenarios (Sep - Nov 2026)")
     st.write("Based on state-by-state median weather histories, here is what the Random Forest algorithm predicts the highest probability fire causes will be next Fall.")
     st.dataframe(forecast_df, use_container_width=True, hide_index=True)
+
+with tab5:
+    st.markdown("### 🎮 Interactive Wildfire Cause Predictor")
+    st.write("Adjust the environmental factors below to see what the AI predicts as the most likely cause.")
+    
+    # Cache loading the model so it doesn't freeze the UI
+    @st.cache_resource(show_spinner=False)
+    def load_cached_model():
+        if os.path.exists(config.MODEL_SAVE_PATH):
+            return joblib.load(config.MODEL_SAVE_PATH)
+        return None
+
+    artifacts = load_cached_model()
+    
+    if artifacts:
+        model = artifacts['model']
+        le = artifacts['encoder']
+        
+        # 1. Create the UI Layout
+        col_a, col_b, col_c, col_d = st.columns(4)
+        with col_a:
+            # Get available states dynamically from merged data
+            available_states = sorted(merged_df['STATE'].dropna().unique())
+            input_state = st.selectbox("State", available_states, index=available_states.index('CA') if 'CA' in available_states else 0)
+        with col_b:
+            input_month = st.selectbox("Month", list(range(1, 13)), index=7) # Default to August (8)
+        with col_c:
+            input_fire_size = st.number_input("Fire Size (Acres)", min_value=0.1, max_value=500000.0, value=100.0, step=50.0)
+        with col_d:
+            input_storms = st.number_input("Monthly Storms in State", min_value=0, max_value=500, value=15, step=1)
+            
+        if st.button("🚀 Run AI Prediction", use_container_width=True):
+            # 2. Grab median Lat/Lon for the selected state so the model has realistic coordinates
+            state_data = merged_df[merged_df['STATE'] == input_state]
+            med_lat = state_data['LAT_ROUNDED'].median() if not state_data.empty else 39.8
+            med_lon = state_data['LON_ROUNDED'].median() if not state_data.empty else -98.6
+
+            # 3. Build the dataframe format the model expects
+            input_df = pd.DataFrame([{
+                'MONTH': input_month,
+                'MONTH_SIN': np.sin(2 * np.pi * input_month / 12.0),
+                'MONTH_COS': np.cos(2 * np.pi * input_month / 12.0),
+                'STATE': input_state,
+                'LOG_FIRE_SIZE': np.log1p(input_fire_size), # Model expects Log scaled size
+                'MONTHLY_STORMS': input_storms,
+                'LAT_ROUNDED': med_lat,
+                'LON_ROUNDED': med_lon
+            }])
+            
+            # 4. Apply One-Hot Encoding just like during training
+            X_input_raw = input_df.drop(columns=['MONTH'], errors='ignore')
+            X_input = pd.get_dummies(X_input_raw)
+            
+            # Align columns perfectly with the trained XGBoost model
+            expected_cols = model.feature_names_in_
+            X_input = X_input.reindex(columns=expected_cols, fill_value=0)
+            
+            # 5. Make Predictions
+            pred_encoded = model.predict(X_input)[0]
+            predicted_cause = le.inverse_transform([pred_encoded])[0]
+            probs = model.predict_proba(X_input)[0]
+            
+            # Get top 4 probabilities
+            prob_df = pd.DataFrame({
+                'Cause': le.inverse_transform(range(len(probs))),
+                'Probability (%)': probs * 100
+            }).sort_values('Probability (%)', ascending=False).head(4)
+            
+            # 6. Render Results
+            st.success(f"### 🎯 Top Predicted Cause: **{predicted_cause}**")
+            
+            fig_probs = px.bar(
+                prob_df, 
+                x='Probability (%)', 
+                y='Cause', 
+                orientation='h',
+                color='Probability (%)',
+                color_continuous_scale='Teal',
+                title="AI Confidence Breakdown"
+            )
+            # Make chart look native to your current bright UI theme
+            fig_probs.update_layout(
+                yaxis={'categoryorder':'total ascending'}, 
+                plot_bgcolor='rgba(255,255,255,0.5)', 
+                paper_bgcolor='rgba(0,0,0,0)',
+                font=dict(color='#102A43')
+            )
+            st.plotly_chart(fig_probs, use_container_width=True)
+            
+    else:
+        st.warning("⚠️ Model not found! Please run `main.py` first to generate `rf_model_v2.pkl`.")
 
 if __name__ == "__main__":
     if not st.runtime.exists():
