@@ -63,3 +63,4 @@ def plot_confusion_matrix():
 @app.get("/")
 def root():
     return {"message": "API is running. Visit /docs for the UI."}
+
