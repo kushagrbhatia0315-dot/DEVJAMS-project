@@ -109,7 +109,8 @@ import urllib
 print("\n🚨 LOCALTUNNEL PASSWORD:", urllib.request.urlopen('https://ipv4.icanhazip.com').read().decode('utf8').strip("\n"))
 !npm install -g localtunnel
 !streamlit run app.py &>/content/logs.txt &
-!npx localtunnel --port 8501```
+!npx localtunnel --port 8501
+```
 ---
 
 ## 🧠 Methodology
