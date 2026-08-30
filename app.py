@@ -95,7 +95,7 @@ st.markdown("---")
 tab1, tab2, tab3, tab4, tab5 = st.tabs([
     "🎯 AI Confusion Matrix", 
     "🗺️ USA Boundary Map", 
-    "📈 Analytics & Analytics", 
+    "📈 Analytics & Data", 
     "🔮 Fall 2026 Forecast",
     "🎮 Live Predictor"
 ])
@@ -116,15 +116,13 @@ with tab3:
         st.markdown("### Historical Event Frequency")
         trend_fig = plot_wildfires_vs_storms_per_year(wf_df, storm_df, config.BAR_GRAPH_SAVE_PATH)
         st.plotly_chart(trend_fig, use_container_width=True)
-with col_right:
+    with col_right:
         st.markdown("### Raw Merged Feature Set")
         display_df = merged_df.drop(columns=['MONTH_SIN', 'MONTH_COS'], errors='ignore')
         st.dataframe(display_df.head(500), use_container_width=True, height=500)
 with tab4:
     st.markdown("### 🍂 Predictive AI Scenarios (Sep - Nov 2026)")
-    st.write("Based on state-by-state median weather histories, here is what the Random Forest algorithm predicts the highest probability fire causes will be next Fall.")
-    
-    # Hide the cyclical ML math columns from the judges' view
+    st.write("Based on state-by-state median weather histories, here is what the XGBoost model predicts predicts the highest probability fire causes will be next Fall.")
     display_forecast = forecast_df.drop(columns=['MONTH_SIN', 'MONTH_COS'], errors='ignore')
     
     st.dataframe(display_forecast, use_container_width=True, hide_index=True)
@@ -207,7 +205,7 @@ with tab5:
             st.plotly_chart(fig_probs, use_container_width=True)
             
     else:
-        st.warning("⚠️ Model not found! Please run `main.py` first to generate `rf_model_v2.pkl`.")
+        st.warning("⚠️ Model not found! Please run `main.py` first to generate `xgb_model_v2.pkl`.")
 
 if __name__ == "__main__":
     if not st.runtime.exists():
