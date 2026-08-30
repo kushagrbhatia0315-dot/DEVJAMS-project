@@ -1,7 +1,6 @@
 import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split
-
 STATE_MAP = {
     "ALABAMA": "AL", "ALASKA": "AK", "ARIZONA": "AZ", "ARKANSAS": "AR", "CALIFORNIA": "CA",
     "COLORADO": "CO", "CONNECTICUT": "CT", "DELAWARE": "DE", "FLORIDA": "FL", "GEORGIA": "GA",
@@ -15,15 +14,10 @@ STATE_MAP = {
     "TEXAS": "TX", "UTAH": "UT", "VERMONT": "VT", "VIRGINIA": "VA", "WASHINGTON": "WA",
     "WEST VIRGINIA": "WV", "WISCONSIN": "WI", "WYOMING": "WY"
 }
-
 def merge_and_engineer(wf_df: pd.DataFrame, storm_df: pd.DataFrame, target_col: str):
     print("--> [3/5] Merging Datasets & Engineering High-Accuracy Features...")
-    
-    # 1. Remove noise classes
     invalid_causes = ['Missing/Undefined', 'Miscellaneous']
     wf_df = wf_df[~wf_df[target_col].isin(invalid_causes)].dropna().copy()
-    
-    # 2. Map target categories into 5 distinct groups
     cause_map = {
         'Lightning': 'Natural (Lightning)',
         'Arson': 'Malicious (Arson)',
@@ -39,20 +33,14 @@ def merge_and_engineer(wf_df: pd.DataFrame, storm_df: pd.DataFrame, target_col: 
     }
     wf_df[target_col] = wf_df[target_col].map(cause_map)
     wf_df = wf_df.dropna(subset=[target_col])
-    
-    # 3. High-resolution temporal engineering (DOY + Month)
     wf_df['MONTH'] = pd.to_datetime(
         wf_df['FIRE_YEAR'] * 1000 + wf_df['DISCOVERY_DOY'], 
         format='%Y%j'
     ).dt.month
-    
-    # Fine-grained cyclical day of year signals
     wf_df['DOY_SIN'] = np.sin(2 * np.pi * wf_df['DISCOVERY_DOY'] / 365.25)
     wf_df['DOY_COS'] = np.cos(2 * np.pi * wf_df['DISCOVERY_DOY'] / 365.25)
     wf_df['MONTH_SIN'] = np.sin(2 * np.pi * wf_df['MONTH'] / 12.0)
     wf_df['MONTH_COS'] = np.cos(2 * np.pi * wf_df['MONTH'] / 12.0)
-
-    # 4. Integrate storm frequencies
     storm_df['STATE'] = storm_df['STATE'].str.upper().map(STATE_MAP)
     month_map = {'January': 1, 'February': 2, 'March': 3, 'April': 4, 'May': 5, 'June': 6, 
                  'July': 7, 'August': 8, 'September': 9, 'October': 10, 'November': 11, 'December': 12}
@@ -66,8 +54,6 @@ def merge_and_engineer(wf_df: pd.DataFrame, storm_df: pd.DataFrame, target_col: 
         how='left'
     )
     merged_df['MONTHLY_STORMS'] = merged_df['MONTHLY_STORMS'].fillna(0)
-
-    # 5. Spatial & Non-Linear interaction features
     merged_df['LAT_ROUNDED'] = merged_df['LATITUDE'].round(2)
     merged_df['LON_ROUNDED'] = merged_df['LONGITUDE'].round(2)
     merged_df['SPATIAL_INTERACT'] = merged_df['LATITUDE'] * merged_df['LONGITUDE']
@@ -83,5 +69,4 @@ def prepare_for_ml(df: pd.DataFrame, target_col: str, test_size: float):
     y = df[target_col]
     X_raw = df.drop(columns=[target_col])
     X = pd.get_dummies(X_raw)
-
     return train_test_split(X, y, test_size=test_size, random_state=42, stratify=y)
