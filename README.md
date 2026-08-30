@@ -52,22 +52,30 @@ project-devjams/
 
 ```python
 # 1. Clone Repo & Install
+!rm -rf /content/DEVJAMS-project
 !git clone https://github.com/kushagrbhatia0315-dot/DEVJAMS-project.git
 %cd /content/DEVJAMS-project
 !pip install -r requirements.txt
 
-# 2. Download Data (Kagglehub)
+# 2. Download Data
 !python setup_data.py
 
 # 3. Train the Model
 !python main.py
 
-# 4. Launch the App
-import urllib
-print("\n🚨 LOCALTUNNEL PASSWORD:", urllib.request.urlopen('https://ipv4.icanhazip.com').read().decode('utf8').strip("\n"))
-!npm install -g localtunnel
-!streamlit run app.py &>/content/logs.txt &
-!npx localtunnel --port 8501
+# 4. Launch the App (Cloudflare Tunnel - NO PASSWORD NEEDED)
+!wget -q -nc https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64
+!chmod +x cloudflared-linux-amd64
+
+# Start Streamlit with WebSocket security disabled so data can flow!
+!streamlit run app.py --server.enableCORS false --server.enableXsrfProtection false --server.enableWebsocketCompression false &>/content/logs.txt &
+
+# Start Cloudflare Tunnel and grab the URL
+import time
+!nohup ./cloudflared-linux-amd64 tunnel --url http://localhost:8501 &> /content/tunnel.txt &
+time.sleep(5)
+print("\n🚨 CLICK THIS LINK TO VIEW YOUR APP:\n")
+!grep -o 'https://.*\.trycloudflare.com' /content/tunnel.txt
 ```
 
 *(Once the pipeline finishes, click the generated `loca.lt` link at the bottom and paste the password to view the live dashboard!)*
