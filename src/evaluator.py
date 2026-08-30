@@ -3,15 +3,15 @@ import pandas as pd
 import numpy as np
 import plotly.express as px
 import plotly.graph_objects as go
-from sklearn.metrics import accuracy_score, confusion_matrix
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix
 
 def create_gauge(value, max_val, title, color):
     fig = go.Figure(go.Indicator(
         mode="gauge+number",
-        value=value,
+        value=round(value, 1) if isinstance(value, float) else value,
         domain={'x': [0, 1], 'y': [0, 1]},
-        title={'text': title, 'font': {'size': 20, 'color': '#102A43'}},
-        number={'font': {'color': '#102A43'}},
+        title={'text': title, 'font': {'size': 15, 'color': '#102A43'}},
+        number={'font': {'color': '#102A43', 'size': 22}},
         gauge={
             'axis': {'range': [None, max_val], 'tickwidth': 1, 'tickcolor': "darkblue"},
             'bar': {'color': color},
@@ -19,21 +19,28 @@ def create_gauge(value, max_val, title, color):
             'borderwidth': 2,
             'bordercolor': "gray",
             'steps': [
-                {'range': [0, max_val*0.33], 'color': 'rgba(0,255,0,0.1)'},
-                {'range': [max_val*0.33, max_val*0.66], 'color': 'rgba(255,255,0,0.1)'},
-                {'range': [max_val*0.66, max_val], 'color': 'rgba(255,0,0,0.1)'}
+                {'range': [0, max_val * 0.33], 'color': 'rgba(0,255,0,0.1)'},
+                {'range': [max_val * 0.33, max_val * 0.66], 'color': 'rgba(255,255,0,0.1)'},
+                {'range': [max_val * 0.66, max_val], 'color': 'rgba(255,0,0,0.1)'}
             ],
         }
     ))
     fig.update_layout(
         paper_bgcolor="rgba(0,0,0,0)",
-        height=250,
-        margin=dict(l=15, r=15, t=40, b=15)
+        height=200,
+        margin=dict(l=10, r=10, t=35, b=10)
     )
     return fig
 
 def evaluate_and_plot(y_test, predictions, save_path: str):
-    acc = accuracy_score(y_test, predictions)
+    # This dictionary now perfectly matches app.py
+    metrics = {
+        'accuracy': accuracy_score(y_test, predictions),
+        'precision': precision_score(y_test, predictions, average='weighted', zero_division=0),
+        'recall': recall_score(y_test, predictions, average='weighted', zero_division=0),
+        'f1': f1_score(y_test, predictions, average='weighted', zero_division=0)
+    }
+    
     matrix = confusion_matrix(y_test, predictions)
     labels = sorted(y_test.unique())
     
@@ -45,6 +52,7 @@ def evaluate_and_plot(y_test, predictions, save_path: str):
         y=labels,
         labels=dict(color="Count") 
     )
+    
     fig.update_layout(
         title=dict(text="🎯 AI Prediction Confusion Matrix", font=dict(size=26, color='#102A43')),
         template="plotly_white",
@@ -64,7 +72,7 @@ def evaluate_and_plot(y_test, predictions, save_path: str):
     except Exception:
         pass
         
-    return acc, fig, matrix
+    return metrics, fig, matrix
 
 def plot_wildfires_vs_storms_per_year(wf_df: pd.DataFrame, storm_df: pd.DataFrame, save_path: str):
     wf_counts = wf_df.groupby('FIRE_YEAR').size().reset_index(name='Wildfires')
