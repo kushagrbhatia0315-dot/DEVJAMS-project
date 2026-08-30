@@ -47,33 +47,17 @@ project-devjams/
 ---
 
 ## ⚙️ Installation
+## 💻 Local Evaluation (Run All At Once)
 
-**1. Clone the repository**
+*( Mac Users: Please run `brew install libomp` before executing, as XGBoost requires it).*
 ```bash
 git clone [https://github.com/kushagrbhatia0315-dot/DEVJAMS-project.git](https://github.com/kushagrbhatia0315-dot/DEVJAMS-project.git)
 cd DEVJAMS-project
-```
-
-**2. Create a virtual environment (recommended for local use)**
-```bash
 python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-```
-
-**3. Install dependencies**
-```bash
+source venv/bin/activate
 pip install -r requirements.txt
-pip install huggingface_hub
-```
-
-**4. Download required data (Automated)**
-No manual downloading needed! Run this python snippet to safely fetch the datasets directly from Hugging Face into the correct folders:
-```python
-from huggingface_hub import hf_hub_download, snapshot_download
-
-hf_hub_download(repo_id="kushagrbhatia03/wildfire-storm-data", repo_type="dataset", filename="FPA_FOD_20170508.sqlite", local_dir=".")
-snapshot_download(repo_id="kushagrbhatia03/wildfire-storm-data", repo_type="dataset", allow_patterns="Storms 1996-2019/*", local_dir="./data")
-```
+python setup_data.py
+python main.py
 ---
 ## 🚀 Usage & Judge Evaluation (Google Colab)
 
