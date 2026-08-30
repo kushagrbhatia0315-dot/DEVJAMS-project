@@ -52,7 +52,7 @@ project-devjams/
 
 ```python
 # 1. Clone Repo & Install
-!git clone [https://github.com/kushagrbhatia0315-dot/DEVJAMS-project.git](https://github.com/kushagrbhatia0315-dot/DEVJAMS-project.git)
+!git clone https://github.com/kushagrbhatia0315-dot/DEVJAMS-project.git
 %cd /content/DEVJAMS-project
 !pip install -r requirements.txt
 
@@ -64,7 +64,7 @@ project-devjams/
 
 # 4. Launch the App
 import urllib
-print("\n🚨 LOCALTUNNEL PASSWORD:", urllib.request.urlopen('[https://ipv4.icanhazip.com](https://ipv4.icanhazip.com)').read().decode('utf8').strip("\n"))
+print("\n🚨 LOCALTUNNEL PASSWORD:", urllib.request.urlopen('https://ipv4.icanhazip.com').read().decode('utf8').strip("\n"))
 !npm install -g localtunnel
 !streamlit run app.py &>/content/logs.txt &
 !npx localtunnel --port 8501
