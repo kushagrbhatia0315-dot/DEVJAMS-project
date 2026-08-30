@@ -13,6 +13,7 @@ from src.evaluator import evaluate_and_plot, plot_wildfires_vs_storms_per_year, 
 
 st.set_page_config(page_title="Wildfire & Storm Predictor", layout="wide", initial_sidebar_state="expanded")
 
+# ABSOLUTELY NO SPACES BEFORE <style>! This fixes the Markdown bug.
 st.markdown("""
 <style>
 /* Catchy Bright Gradient Background */
@@ -56,13 +57,13 @@ def load_and_prep_data():
 def run_model_pipeline(_merged_df):
     X_train, X_test, y_train, y_test = prepare_for_ml(_merged_df, config.WF_TARGET, config.TEST_SIZE)
     predictions = train_and_predict(X_train, y_train, X_test, config.MODEL_SAVE_PATH)
-    acc, fig_matrix, matrix = evaluate_and_plot(y_test, predictions, config.PLOT_SAVE_PATH)
+    metrics, fig_matrix, matrix = evaluate_and_plot(y_test, predictions, config.PLOT_SAVE_PATH)
     forecast_df = predict_fall_2026_scenario(config.MODEL_SAVE_PATH, X_train.columns, _merged_df)
-    return acc, fig_matrix, forecast_df
+    return metrics, fig_matrix, forecast_df
 
 with st.spinner("Initializing Datasets & AI Model..."):
     wf_df, storm_df, merged_df = load_and_prep_data()
-    acc, fig_matrix, forecast_df = run_model_pipeline(merged_df)
+    metrics, fig_matrix, forecast_df = run_model_pipeline(merged_df)
 
 with st.sidebar:
     st.title("⚙️ Dashboard Controls")
@@ -82,13 +83,23 @@ storms_this_year = len(storm_df[storm_df['YEAR'] == selected_year])
 max_fires = wf_df.groupby('FIRE_YEAR').size().max()
 max_storms = storm_df.groupby('YEAR').size().max()
 
+# --- ROW 1: The Core Stats ---
 col1, col2, col3 = st.columns(3)
 with col1:
     st.plotly_chart(create_gauge(fires_this_year, max_fires, "Total Wildfires", "#ff4b4b"), use_container_width=True)
 with col2:
     st.plotly_chart(create_gauge(storms_this_year, max_storms, "Total Storms", "#17a3f4"), use_container_width=True)
 with col3:
-    st.plotly_chart(create_gauge(acc*100, 100, "AI Accuracy (%)", "#82ca9d"), use_container_width=True)
+    st.plotly_chart(create_gauge(metrics['accuracy'] * 100, 100, "Accuracy (%)", "#82ca9d"), use_container_width=True)
+
+# --- ROW 2: The Deep ML Metrics ---
+col4, col5, col6 = st.columns(3)
+with col4:
+    st.plotly_chart(create_gauge(metrics['precision'] * 100, 100, "Precision (%)", "#8884d8"), use_container_width=True)
+with col5:
+    st.plotly_chart(create_gauge(metrics['recall'] * 100, 100, "Recall (%)", "#ffc658"), use_container_width=True)
+with col6:
+    st.plotly_chart(create_gauge(metrics['f1'] * 100, 100, "F1 Score (%)", "#ff7300"), use_container_width=True)
 
 st.markdown("---")
 
@@ -125,7 +136,6 @@ with tab4:
     st.markdown("### 🍂 Predictive AI Scenarios (Sep - Nov 2026)")
     st.write("Based on state-by-state median weather histories, here is what the XGBoost model predicts the highest probability fire causes will be next Fall.")
     display_forecast = forecast_df.drop(columns=['MONTH_SIN', 'MONTH_COS'], errors='ignore')
-    
     st.dataframe(display_forecast, use_container_width=True, hide_index=True)
 
 with tab5:
@@ -149,7 +159,7 @@ with tab5:
             available_states = sorted(merged_df['STATE'].dropna().unique())
             input_state = st.selectbox("State", available_states, index=available_states.index('CA') if 'CA' in available_states else 0)
         with col_b:
-            input_month = st.selectbox("Month", list(range(1, 13)), index=7) # Default to August (8)
+            input_month = st.selectbox("Month", list(range(1, 13)), index=7)
         with col_c:
             input_fire_size = st.number_input("Fire Size (Acres)", min_value=0.1, max_value=500000.0, value=100.0, step=50.0)
         with col_d:
@@ -198,7 +208,7 @@ with tab5:
                 title="AI Confidence Breakdown"
             )
             fig_probs.update_layout(
-                yaxis={'categoryorder':'total ascending'}, 
+                yaxis={'categoryorder': 'total ascending'}, 
                 plot_bgcolor='rgba(255,255,255,0.5)', 
                 paper_bgcolor='rgba(0,0,0,0)',
                 font=dict(color='#102A43')
@@ -210,7 +220,8 @@ with tab5:
 
 if __name__ == "__main__":
     if not st.runtime.exists():
-        subprocess.run(["streamlit", "run", __file__, "--server.port", "8501"])
-
-
-
+        subprocess.run([
+            "streamlit", "run", __file__, 
+            "--server.port", "8501", 
+            "--server.address", "0.0.0.0", 
+        ])
