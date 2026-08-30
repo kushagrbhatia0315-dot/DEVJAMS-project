@@ -2,7 +2,7 @@ import os
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 WILDFIRE_DB = os.path.join(BASE_DIR, 'FPA_FOD_20170508.sqlite')
 STORMS_DIR = os.path.join(BASE_DIR, 'data', 'Storms 1996-2019') 
-MODEL_SAVE_PATH = os.path.join(BASE_DIR, 'models', 'rf_model_v2.pkl')
+MODEL_SAVE_PATH = os.path.join(BASE_DIR, 'models', 'xgb_model_v2.pkl')
 PLOT_SAVE_PATH = os.path.join(BASE_DIR, 'outputs', 'confusion_matrix.png')
 BAR_GRAPH_SAVE_PATH = os.path.join(BASE_DIR, 'outputs', 'annual_comparison.png')
 ROW_LIMIT = 160000 
