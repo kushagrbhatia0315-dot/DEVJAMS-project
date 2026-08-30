@@ -14,35 +14,35 @@ from src.evaluator import evaluate_and_plot, plot_wildfires_vs_storms_per_year, 
 st.set_page_config(page_title="Wildfire & Storm Predictor", layout="wide", initial_sidebar_state="expanded")
 
 st.markdown("""
-    <style>
-    /* Catchy Bright Gradient Background */
-    .stApp {
-        background: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%);
-    }
-    /* Convert text to dark colors for readability */
-    html, body, p, h1, h2, h3, h4, h5, h6, span, div {
-        color: #102A43 !important; 
-    }
-    /* Style Tabs to Pop */
-    .stTabs [data-baseweb="tab-list"] {
-        background-color: rgba(255, 255, 255, 0.6);
-        border-radius: 12px;
-        padding: 5px;
-    }
-    .stTabs [data-baseweb="tab"] {
-        font-weight: 700 !important;
-    }
-    /* Make DataFrames bright */
-    .stDataFrame {
-        background-color: rgba(255, 255, 255, 0.8);
-        border-radius: 10px;
-        padding: 10px;
-    }
-    /* Sidebar Styling */
-    [data-testid="stSidebar"] {
-        background-color: rgba(255, 255, 255, 0.7) !important;
-    }
-    </style>
+<style>
+/* Catchy Bright Gradient Background */
+.stApp {
+    background: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%);
+}
+/* Convert text to dark colors for readability */
+html, body, p, h1, h2, h3, h4, h5, h6, span, div {
+    color: #102A43 !important; 
+}
+/* Style Tabs to Pop */
+.stTabs [data-baseweb="tab-list"] {
+    background-color: rgba(255, 255, 255, 0.6);
+    border-radius: 12px;
+    padding: 5px;
+}
+.stTabs [data-baseweb="tab"] {
+    font-weight: 700 !important;
+}
+/* Make DataFrames bright */
+.stDataFrame {
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: 10px;
+    padding: 10px;
+}
+/* Sidebar Styling */
+[data-testid="stSidebar"] {
+    background-color: rgba(255, 255, 255, 0.7) !important;
+}
+</style>
 """, unsafe_allow_html=True)
 
 @st.cache_data(show_spinner=False)
@@ -120,9 +120,10 @@ with tab3:
         st.markdown("### Raw Merged Feature Set")
         display_df = merged_df.drop(columns=['MONTH_SIN', 'MONTH_COS'], errors='ignore')
         st.dataframe(display_df.head(500), use_container_width=True, height=500)
+        
 with tab4:
     st.markdown("### 🍂 Predictive AI Scenarios (Sep - Nov 2026)")
-    st.write("Based on state-by-state median weather histories, here is what the XGBoost model predicts predicts the highest probability fire causes will be next Fall.")
+    st.write("Based on state-by-state median weather histories, here is what the XGBoost model predicts the highest probability fire causes will be next Fall.")
     display_forecast = forecast_df.drop(columns=['MONTH_SIN', 'MONTH_COS'], errors='ignore')
     
     st.dataframe(display_forecast, use_container_width=True, hide_index=True)
@@ -142,7 +143,7 @@ with tab5:
     if artifacts:
         model = artifacts['model']
         le = artifacts['encoder']
-     
+      
         col_a, col_b, col_c, col_d = st.columns(4)
         with col_a:
             available_states = sorted(merged_df['STATE'].dropna().unique())
@@ -175,7 +176,7 @@ with tab5:
             
             expected_cols = model.feature_names_in_
             X_input = X_input.reindex(columns=expected_cols, fill_value=0)
-     
+      
             pred_encoded = model.predict(X_input)[0]
             predicted_cause = le.inverse_transform([pred_encoded])[0]
             probs = model.predict_proba(X_input)[0]
