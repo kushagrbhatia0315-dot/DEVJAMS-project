@@ -19,7 +19,7 @@ The project combines an automated ML pipeline, a **FastAPI** backend for serving
 
 ## 🗂️ Project Structure
 
-```
+```text
 project-devjams/
 │
 ├── FPA_FOD_20170508.sqlite      # SQLite Wildfire Database (must be in root!)
@@ -38,34 +38,21 @@ project-devjams/
 │
 └── src/                         # Core pipeline modules
     ├── config.py                # Global variables and file paths
-    ├── ingestor.py               # Data extraction and SQL queries
-    ├── engineer.py                # Data cleaning and feature engineering
-    ├── modeler.py                # XGBoost model training and forecasting
-    └── evaluator.py               # Accuracy metrics and visualization plotting
+    ├── ingestor.py              # Data extraction and SQL queries
+    ├── engineer.py              # Data cleaning and feature engineering
+    ├── modeler.py               # XGBoost model training and forecasting
+    └── evaluator.py             # Accuracy metrics and visualization plotting
 ```
 
 ---
 
-## ⚙️ Installation
-## 💻 Local Evaluation (Run All At Once)
-
-*( Mac Users: Please run `brew install libomp` before executing, as XGBoost requires it).*
-```bash
-git clone [https://github.com/kushagrbhatia0315-dot/DEVJAMS-project.git](https://github.com/kushagrbhatia0315-dot/DEVJAMS-project.git)
-cd DEVJAMS-project
-python -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
-python setup_data.py
-python main.py
----
 ## 🚀 Usage & Judge Evaluation (Google Colab)
 
 For hackathon judges, the easiest way to evaluate this project end-to-end is via Google Colab. Open a blank [Google Colab Notebook](https://colab.research.google.com/) and run this **all-in-one cell** to download the code, train the XGBoost model, and expose the Streamlit UI to the web:
 
 ```python
 # 1. Clone Repo & Install
-!git clone https://github.com/kushagrbhatia0315-dot/DEVJAMS-project.git
+!git clone [https://github.com/kushagrbhatia0315-dot/DEVJAMS-project.git](https://github.com/kushagrbhatia0315-dot/DEVJAMS-project.git)
 %cd /content/DEVJAMS-project
 !pip install -r requirements.txt
 
@@ -77,11 +64,37 @@ For hackathon judges, the easiest way to evaluate this project end-to-end is via
 
 # 4. Launch the App
 import urllib
-print("\n🚨 LOCALTUNNEL PASSWORD:", urllib.request.urlopen('https://ipv4.icanhazip.com').read().decode('utf8').strip("\n"))
+print("\n🚨 LOCALTUNNEL PASSWORD:", urllib.request.urlopen('[https://ipv4.icanhazip.com](https://ipv4.icanhazip.com)').read().decode('utf8').strip("\n"))
 !npm install -g localtunnel
 !streamlit run app.py &>/content/logs.txt &
 !npx localtunnel --port 8501
 ```
+
+*(Once the pipeline finishes, click the generated `loca.lt` link at the bottom and paste the password to view the live dashboard!)*
+
+---
+
+## 💻 Local Evaluation (Run All At Once)
+
+If a judge prefers to test the project locally rather than using the Google Colab link above, they can simply copy and paste this single block into their terminal to download, setup, and train the model all at once:
+
+*(🍎 Mac Users: Please run `brew install libomp` before executing, as XGBoost requires it).*
+
+```bash
+git clone [https://github.com/kushagrbhatia0315-dot/DEVJAMS-project.git](https://github.com/kushagrbhatia0315-dot/DEVJAMS-project.git)
+cd DEVJAMS-project
+python -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+python setup_data.py
+python main.py
+```
+
+**Launch the Dashboards:**
+Once the model finishes training, open two separate terminal windows inside the project folder to start the servers:
+*   **Terminal 1 (UI):** `streamlit run app.py` 
+*   **Terminal 2 (API):** `uvicorn api:app --reload`
+
 ---
 
 ## 🧠 Methodology
@@ -94,8 +107,7 @@ Sample weighting is used to address class imbalance, since some fire causes (e.g
 
 ## 📊 Model Performance
 
-"Live model evaluation metrics, including real-time accuracy scores and an interactive confusion matrix, are generated dynamically and visualized directly within the Streamlit dashboard."
-*(Populate this table with your actual evaluator.py output, and consider embedding a confusion matrix image from `outputs/`.)*
+Live model evaluation metrics, including real-time accuracy scores and an interactive confusion matrix, are generated dynamically and visualized directly within the Streamlit dashboard.
 
 ---
 
@@ -116,7 +128,5 @@ The pipeline includes a module to generate synthesized fire-risk scenarios for *
 ---
 
 ## 👥 Team / Contributor
- Kushagr Bhatia   (26BIT0109)
- Prince Choudhary (26BIT0107)
--
--
+**Kushagr Bhatia** (26BIT0109)  
+**Prince Choudhary** (26BIT0107)
