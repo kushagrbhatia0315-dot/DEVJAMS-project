@@ -48,7 +48,7 @@ project-devjams/
 
 ## 🚀 Usage & Judge Evaluation (Google Colab)
 
-For hackathon judges, the easiest way to evaluate this project end-to-end is via Google Colab. Open a blank [Google Colab Notebook](https://colab.research.google.com/) and run this **all-in-one cell** to download the code, train the XGBoost model, and expose the Streamlit UI to the web:
+ Open a blank [Google Colab Notebook](https://colab.research.google.com/) and run this **all-in-one cell** to download the code, train the XGBoost model, and expose the Streamlit UI to the web:
 
 ```python
 # 1. Clone Repo & Install
@@ -76,7 +76,7 @@ print("\n🚨 LOCALTUNNEL PASSWORD:", urllib.request.urlopen('[https://ipv4.ican
 
 ## 💻 Local Evaluation (Run All At Once)
 
-If a judge prefers to test the project locally rather than using the Google Colab link above, they can simply copy and paste this single block into their terminal to download, setup, and train the model all at once:
+Copy and paste this single block into  terminal to download, setup, and train the model all at once:
 
 *(🍎 Mac Users: Please run `brew install libomp` before executing, as XGBoost requires it).*
 
