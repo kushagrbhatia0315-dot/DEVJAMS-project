@@ -62,28 +62,32 @@ project-devjams/
 ```bash
 git clone [https://github.com/kushagrbhatia0315-dot/DEVJAMS-project.git](https://github.com/kushagrbhatia0315-dot/DEVJAMS-project.git)
 cd DEVJAMS-project
+```
 
-2. **Create a virtual environment (recommended)**
-   ```bash
-   python -m venv venv
-   source venv/bin/activate      # On Windows: venv\Scripts\activate
-   ```
+**2. Create a virtual environment (recommended for local use)**
+```bash
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+```
 
-3. **Install dependencies**
-   ```bash
-   pip install -r requirements.txt
-   pip install huggingface_hub
-   ```
+**3. Install dependencies**
+```bash
+pip install -r requirements.txt
+pip install huggingface_hub
+```
 
-4. **Add required data**
-    from huggingface_hub import hf_hub_download, snapshot_download
+**4. Download required data (Automated)**
+No manual downloading needed! Run this python snippet to safely fetch the datasets directly from Hugging Face into the correct folders:
+```python
+from huggingface_hub import hf_hub_download, snapshot_download
 
-    hf_hub_download(repo_id="kushagrbhatia03/wildfire-storm-data", repo_type="dataset", filename="FPA_FOD_20170508.sqlite", local_dir=".")
-    snapshot_download(repo_id="kushagrbhatia03/wildfire-storm-data", repo_type="dataset", allow_patterns="Storms 1996-2019/*",             local_dir="./data")
-
+hf_hub_download(repo_id="kushagrbhatia03/wildfire-storm-data", repo_type="dataset", filename="FPA_FOD_20170508.sqlite", local_dir=".")
+snapshot_download(repo_id="kushagrbhatia03/wildfire-storm-data", repo_type="dataset", allow_patterns="Storms 1996-2019/*", local_dir="./data")
+```
 ---
 
 ## 🚀 Usage
+```python
 # 1. Clone Repo & Install
 !git clone [https://github.com/kushagrbhatia0315-dot/DEVJAMS-project.git](https://github.com/kushagrbhatia0315-dot/DEVJAMS-project.git)
 %cd /content/DEVJAMS-project
@@ -104,7 +108,7 @@ print("\n🚨 LOCALTUNNEL PASSWORD:", urllib.request.urlopen('[https://ipv4.ican
 !npm install -g localtunnel
 !streamlit run app.py &>/content/logs.txt &
 !npx localtunnel --port 8501
-
+```
 ---
 
 ## 🧠 Methodology
