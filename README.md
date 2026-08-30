@@ -58,11 +58,10 @@ project-devjams/
 
 ## ⚙️ Installation
 
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/kushagrbhatia0315-dot/DEVJAMS-project.git
-   cd DEVJAMS-project
-   ```
+**1. Clone the repository**
+```bash
+git clone [https://github.com/kushagrbhatia0315-dot/DEVJAMS-project.git](https://github.com/kushagrbhatia0315-dot/DEVJAMS-project.git)
+cd DEVJAMS-project
 
 2. **Create a virtual environment (recommended)**
    ```bash
@@ -73,32 +72,38 @@ project-devjams/
 3. **Install dependencies**
    ```bash
    pip install -r requirements.txt
+   pip install huggingface_hub
    ```
 
 4. **Add required data**
-   - Place `FPA_FOD_20170508.sqlite` in the project root.
-   - Place NOAA storm CSV files in `data/Storms 1996-2019/`.
-   - *(Add a link or instructions here for where to download these datasets.)*
+    from huggingface_hub import hf_hub_download, snapshot_download
+
+    hf_hub_download(repo_id="kushagrbhatia03/wildfire-storm-data", repo_type="dataset", filename="FPA_FOD_20170508.sqlite", local_dir=".")
+    snapshot_download(repo_id="kushagrbhatia03/wildfire-storm-data", repo_type="dataset", allow_patterns="Storms 1996-2019/*",             local_dir="./data")
 
 ---
 
 ## 🚀 Usage
+# 1. Clone Repo & Install
+!git clone [https://github.com/kushagrbhatia0315-dot/DEVJAMS-project.git](https://github.com/kushagrbhatia0315-dot/DEVJAMS-project.git)
+%cd /content/DEVJAMS-project
+!pip install -r requirements.txt huggingface_hub
 
-**1. Run the ML pipeline** (ingest → engineer → train → evaluate)
-```bash
-python main.py
-```
+# 2. Download Data
+import os
+from huggingface_hub import hf_hub_download, snapshot_download
+hf_hub_download(repo_id="kushagrbhatia03/wildfire-storm-data", repo_type="dataset", filename="FPA_FOD_20170508.sqlite", local_dir=".")
+snapshot_download(repo_id="kushagrbhatia03/wildfire-storm-data", repo_type="dataset", allow_patterns="Storms 1996-2019/*", local_dir="./data")
 
-**2. Launch the Streamlit app**
-```bash
-streamlit run app.py
-```
+# 3. Train the Model
+!python main.py
 
-**3. Start the FastAPI server**
-```bash
-uvicorn api:app --reload
-```
-API docs will be available at `http://localhost:8000/docs`.
+# 4. Launch the App
+import urllib
+print("\n🚨 LOCALTUNNEL PASSWORD:", urllib.request.urlopen('[https://ipv4.icanhazip.com](https://ipv4.icanhazip.com)').read().decode('utf8').strip("\n"))
+!npm install -g localtunnel
+!streamlit run app.py &>/content/logs.txt &
+!npx localtunnel --port 8501
 
 ---
 
