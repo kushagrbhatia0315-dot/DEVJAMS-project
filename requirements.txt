@@ -1,5 +1,6 @@
 streamlit
 fastapi
+uvicorn
 pandas
 numpy
 scikit-learn
@@ -8,4 +9,4 @@ joblib
 matplotlib
 seaborn
 plotly
-kagglehub
+huggingface_hub
