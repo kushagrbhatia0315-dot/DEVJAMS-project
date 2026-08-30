@@ -22,8 +22,8 @@ def plot_disasters_by_year():
     if not os.path.exists("api_disaster_data.csv"):
         raise HTTPException(status_code=404, detail="Data file not found. Run main.py first.")
     df = pd.read_csv("api_disaster_data.csv")
-    year_column = "Year" 
-    target_column = "Target"
+    year_column = "FIRE_YEAR" 
+    target_column = "STAT_CAUSE_DESCR"
     counts = df.groupby([year_column, target_column]).size().reset_index(name="Incident_Count")
     plt.figure(figsize=(10, 6))
     sns.set_theme(style="whitegrid")
