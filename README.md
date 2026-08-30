@@ -85,11 +85,13 @@ hf_hub_download(repo_id="kushagrbhatia03/wildfire-storm-data", repo_type="datase
 snapshot_download(repo_id="kushagrbhatia03/wildfire-storm-data", repo_type="dataset", allow_patterns="Storms 1996-2019/*", local_dir="./data")
 ```
 ---
+## 🚀 Usage & Judge Evaluation (Google Colab)
 
-## 🚀 Usage
+For hackathon judges, the easiest way to evaluate this project end-to-end is via Google Colab. Open a blank [Google Colab Notebook](https://colab.research.google.com/) and run this **all-in-one cell** to download the code, train the XGBoost model, and expose the Streamlit UI to the web:
+
 ```python
 # 1. Clone Repo & Install
-!git clone [https://github.com/kushagrbhatia0315-dot/DEVJAMS-project.git](https://github.com/kushagrbhatia0315-dot/DEVJAMS-project.git)
+!git clone https://github.com/kushagrbhatia0315-dot/DEVJAMS-project.git
 %cd /content/DEVJAMS-project
 !pip install -r requirements.txt huggingface_hub
 
@@ -104,11 +106,10 @@ snapshot_download(repo_id="kushagrbhatia03/wildfire-storm-data", repo_type="data
 
 # 4. Launch the App
 import urllib
-print("\n🚨 LOCALTUNNEL PASSWORD:", urllib.request.urlopen('[https://ipv4.icanhazip.com](https://ipv4.icanhazip.com)').read().decode('utf8').strip("\n"))
+print("\n🚨 LOCALTUNNEL PASSWORD:", urllib.request.urlopen('https://ipv4.icanhazip.com').read().decode('utf8').strip("\n"))
 !npm install -g localtunnel
 !streamlit run app.py &>/content/logs.txt &
 !npx localtunnel --port 8501
-```
 ---
 
 ## 🧠 Methodology
