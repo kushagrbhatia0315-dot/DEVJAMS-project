@@ -109,7 +109,7 @@ import urllib
 print("\n🚨 LOCALTUNNEL PASSWORD:", urllib.request.urlopen('https://ipv4.icanhazip.com').read().decode('utf8').strip("\n"))
 !npm install -g localtunnel
 !streamlit run app.py &>/content/logs.txt &
-!npx localtunnel --port 8501
+!npx localtunnel --port 8501```
 ---
 
 ## 🧠 Methodology
@@ -122,12 +122,7 @@ Sample weighting is used to address class imbalance, since some fire causes (e.g
 
 ## 📊 Model Performance
 
-| Metric | Value |
-|---|---|
-| Accuracy | *TBD* |
-| F1 (weighted) | *TBD* |
-| Top predicted cause classes | *TBD* |
-
+"Live model evaluation metrics, including real-time accuracy scores and an interactive confusion matrix, are generated dynamically and visualized directly within the Streamlit dashboard."
 *(Populate this table with your actual evaluator.py output, and consider embedding a confusion matrix image from `outputs/`.)*
 
 ---
