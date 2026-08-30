@@ -83,13 +83,10 @@ For hackathon judges, the easiest way to evaluate this project end-to-end is via
 # 1. Clone Repo & Install
 !git clone https://github.com/kushagrbhatia0315-dot/DEVJAMS-project.git
 %cd /content/DEVJAMS-project
-!pip install -r requirements.txt huggingface_hub
+!pip install -r requirements.txt
 
-# 2. Download Data
-import os
-from huggingface_hub import hf_hub_download, snapshot_download
-hf_hub_download(repo_id="kushagrbhatia03/wildfire-storm-data", repo_type="dataset", filename="FPA_FOD_20170508.sqlite", local_dir=".")
-snapshot_download(repo_id="kushagrbhatia03/wildfire-storm-data", repo_type="dataset", allow_patterns="Storms 1996-2019/*", local_dir="./data")
+# 2. Download Data (Kagglehub)
+!python setup_data.py
 
 # 3. Train the Model
 !python main.py
