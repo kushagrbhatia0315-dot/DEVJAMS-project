@@ -1,5 +1,5 @@
-import streamlit as st
 import os
+import streamlit as st
 import pandas as pd
 import joblib
 import numpy as np
@@ -92,7 +92,7 @@ with col3:
 
 st.markdown("---")
 
-tab1, tab2, tab3, tab4,tab5 = st.tabs([
+tab1, tab2, tab3, tab4, tab5 = st.tabs([
     "🎯 AI Confusion Matrix", 
     "🗺️ USA Boundary Map", 
     "📈 Analytics & Analytics", 
@@ -116,14 +116,18 @@ with tab3:
         st.markdown("### Historical Event Frequency")
         trend_fig = plot_wildfires_vs_storms_per_year(wf_df, storm_df, config.BAR_GRAPH_SAVE_PATH)
         st.plotly_chart(trend_fig, use_container_width=True)
-    with col_right:
+with col_right:
         st.markdown("### Raw Merged Feature Set")
-        st.dataframe(merged_df.head(500), use_container_width=True, height=400)
-
+        display_df = merged_df.drop(columns=['MONTH_SIN', 'MONTH_COS'], errors='ignore')
+        st.dataframe(display_df.head(500), use_container_width=True, height=500)
 with tab4:
     st.markdown("### 🍂 Predictive AI Scenarios (Sep - Nov 2026)")
     st.write("Based on state-by-state median weather histories, here is what the Random Forest algorithm predicts the highest probability fire causes will be next Fall.")
-    st.dataframe(forecast_df, use_container_width=True, hide_index=True)
+    
+    # Hide the cyclical ML math columns from the judges' view
+    display_forecast = forecast_df.drop(columns=['MONTH_SIN', 'MONTH_COS'], errors='ignore')
+    
+    st.dataframe(display_forecast, use_container_width=True, hide_index=True)
 
 with tab5:
     st.markdown("### 🎮 Interactive Wildfire Cause Predictor")
@@ -208,4 +212,6 @@ with tab5:
 if __name__ == "__main__":
     if not st.runtime.exists():
         subprocess.run(["streamlit", "run", __file__, "--server.port", "8501"])
+
+
 
