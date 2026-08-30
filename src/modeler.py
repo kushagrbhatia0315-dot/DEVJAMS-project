@@ -5,16 +5,12 @@ import numpy as np
 from xgboost import XGBClassifier
 from sklearn.preprocessing import LabelEncoder
 from sklearn.utils.class_weight import compute_sample_weight
-
 def train_and_predict(X_train, y_train, X_test, save_path: str):
     print("--> [4/5] Training Optimized XGBoost Classifier...")
     le = LabelEncoder()
     y_train_encoded = le.fit_transform(y_train)
-    
-    # Compute smoothed sample weights to maintain high precision without sacrificing accuracy
     sample_weights = compute_sample_weight(class_weight='balanced', y=y_train)
-    sample_weights = np.sqrt(sample_weights) # Square-root smoothing for optimal precision/recall balance
-    
+    sample_weights = np.sqrt(sample_weights)
     model = XGBClassifier(
         n_estimators=250, 
         max_depth=8, 
@@ -44,12 +40,10 @@ def predict_fall_2026_scenario(save_path: str, training_columns: list, merged_df
     artifacts = joblib.load(save_path)
     model = artifacts['model']
     le = artifacts['encoder']
-    
     states = ['CA', 'TX', 'FL', 'OR', 'WA', 'CO', 'AZ']
     months = [9, 10, 11]
     approx_doy = {9: 258, 10: 288, 11: 319}
     scenarios = []
-    
     state_stats = merged_df.groupby('STATE').agg({
         'LOG_FIRE_SIZE': 'median',
         'MONTHLY_STORMS': 'mean',
@@ -92,7 +86,6 @@ def predict_fall_2026_scenario(save_path: str, training_columns: list, merged_df
     scenario_df = pd.DataFrame(scenarios)
     X_scenario = pd.get_dummies(scenario_df)
     X_scenario = X_scenario.reindex(columns=training_columns, fill_value=0)
-    
     preds_encoded = model.predict(X_scenario)
     scenario_df['PREDICTED_CAUSE'] = le.inverse_transform(preds_encoded)
     
