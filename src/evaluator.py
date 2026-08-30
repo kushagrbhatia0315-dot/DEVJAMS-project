@@ -33,7 +33,6 @@ def create_gauge(value, max_val, title, color):
     return fig
 
 def evaluate_and_plot(y_test, predictions, save_path: str):
-    # This dictionary now perfectly matches app.py
     metrics = {
         'accuracy': accuracy_score(y_test, predictions),
         'precision': precision_score(y_test, predictions, average='weighted', zero_division=0),
@@ -77,12 +76,9 @@ def evaluate_and_plot(y_test, predictions, save_path: str):
 def plot_wildfires_vs_storms_per_year(wf_df: pd.DataFrame, storm_df: pd.DataFrame, save_path: str):
     wf_counts = wf_df.groupby('FIRE_YEAR').size().reset_index(name='Wildfires')
     wf_counts = wf_counts.rename(columns={'FIRE_YEAR': 'Year'})
-    
     storm_counts = storm_df.groupby('YEAR').size().reset_index(name='Storms')
     storm_counts = storm_counts.rename(columns={'YEAR': 'Year'})
-    
-    merged = pd.merge(wf_counts, storm_counts, on='Year', how='inner').sort_values('Year')
-    
+    merged = pd.merge(wf_counts, storm_counts, on='Year', how='inner').sort_values('Year') 
     fig = px.bar(
         merged, 
         x='Year', 
@@ -90,8 +86,7 @@ def plot_wildfires_vs_storms_per_year(wf_df: pd.DataFrame, storm_df: pd.DataFram
         barmode='group',
         color_discrete_map={'Wildfires': '#ff4b4b', 'Storms': '#17a3f4'},
         title="Annual Occurrences: Wildfires vs. Storms"
-    )
-    
+    ) 
     fig.update_layout(
         template="plotly_white",
         plot_bgcolor='rgba(255,255,255,0.5)',
@@ -107,9 +102,7 @@ def plot_wildfires_vs_storms_per_year(wf_df: pd.DataFrame, storm_df: pd.DataFram
 def plot_us_disaster_map(wf_df: pd.DataFrame, storm_df: pd.DataFrame, selected_year: int):
     wf_filtered = wf_df[wf_df['FIRE_YEAR'] == selected_year]
     storm_filtered = storm_df[storm_df['YEAR'] == selected_year]
-
     fig = go.Figure()
-
     fig.add_trace(go.Scattermap(
         lon=storm_filtered['BEGIN_LON'], lat=storm_filtered['BEGIN_LAT'],
         text="Storm: " + storm_filtered['EVENT_TYPE'],
