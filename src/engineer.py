@@ -18,7 +18,23 @@ STATE_MAP = {
 
 def merge_and_engineer(wf_df: pd.DataFrame, storm_df: pd.DataFrame, target_col: str):
     print("--> [3/5] Merging Datasets & Engineering Features...")
-    wf_df = wf_df[wf_df[target_col] != 'Missing/Undefined'].dropna().copy()
+    invalid_causes = ['Missing/Undefined', 'Miscellaneous']
+    wf_df = wf_df[~wf_df[target_col].isin(invalid_causes)].dropna().copy()
+    cause_map = {
+        'Lightning': 'Natural (Weather)',
+        'Arson': 'Malicious (Arson)',
+        'Debris Burning': 'Accidental (Human)',
+        'Campfire': 'Accidental (Human)',
+        'Equipment Use': 'Accidental (Human)',
+        'Smoking': 'Accidental (Human)',
+        'Children': 'Accidental (Human)',
+        'Railroad': 'Accidental (Human)',
+        'Structure': 'Accidental (Human)',
+        'Fireworks': 'Accidental (Human)',
+        'Powerline': 'Accidental (Human)'
+    }
+    wf_df[target_col] = wf_df[target_col].map(cause_map)
+    wf_df = wf_df.dropna(subset=[target_col])
     wf_df['MONTH'] = pd.to_datetime(
         wf_df['FIRE_YEAR'] * 1000 + wf_df['DISCOVERY_DOY'], 
         format='%Y%j'
@@ -33,6 +49,16 @@ def merge_and_engineer(wf_df: pd.DataFrame, storm_df: pd.DataFrame, target_col: 
         left_on=['STATE', 'FIRE_YEAR', 'MONTH'], 
         right_on=['STATE', 'YEAR', 'MONTH'], 
         how='left'
+    )
+    merged_df['MONTHLY_STORMS'] = merged_df['MONTHLY_STORMS'].fillna(0)
+    merged_df['MONTH_SIN'] = np.sin(2 * np.pi * merged_df['MONTH'] / 12.0)
+    merged_df['MONTH_COS'] = np.cos(2 * np.pi * merged_df['MONTH'] / 12.0)
+    merged_df['LAT_ROUNDED'] = merged_df['LATITUDE'].round(1)
+    merged_df['LON_ROUNDED'] = merged_df['LONGITUDE'].round(1)
+    merged_df['LOG_FIRE_SIZE'] = np.log1p(merged_df['FIRE_SIZE'])
+    cols_to_drop = ['DISCOVERY_DOY', 'YEAR', 'FIRE_YEAR', 'LATITUDE', 'LONGITUDE', 'FIRE_SIZE']
+    merged_df = merged_df.drop(columns=cols_to_drop, errors='ignore')
+    return merged_df
     )
     merged_df['MONTHLY_STORMS'] = merged_df['MONTHLY_STORMS'].fillna(0)
     merged_df['MONTH_SIN'] = np.sin(2 * np.pi * merged_df['MONTH'] / 12.0)
