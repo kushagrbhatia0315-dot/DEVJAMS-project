@@ -2,7 +2,6 @@ import sqlite3
 import pandas as pd
 import os
 import glob
-
 def extract_wildfires(db_path: str, limit: int, features: list, target: str) -> pd.DataFrame:
     print("--> [1/5] Extracting Wildfire Database...")
     if not os.path.exists(db_path):
