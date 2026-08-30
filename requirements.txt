@@ -9,4 +9,5 @@ joblib
 matplotlib
 seaborn
 plotly
-huggingface_hub
+kagglehub
+kaleido
