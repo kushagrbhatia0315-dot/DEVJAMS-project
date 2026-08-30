@@ -21,51 +21,45 @@ def merge_and_engineer(wf_df: pd.DataFrame, storm_df: pd.DataFrame, target_col: 
     invalid_causes = ['Missing/Undefined', 'Miscellaneous']
     wf_df = wf_df[~wf_df[target_col].isin(invalid_causes)].dropna().copy()
     cause_map = {
-        'Lightning': 'Natural (Weather)',
+        'Lightning': 'Natural (Lightning)',
         'Arson': 'Malicious (Arson)',
-        'Debris Burning': 'Accidental (Human)',
-        'Campfire': 'Accidental (Human)',
-        'Equipment Use': 'Accidental (Human)',
-        'Smoking': 'Accidental (Human)',
-        'Children': 'Accidental (Human)',
-        'Railroad': 'Accidental (Human)',
-        'Structure': 'Accidental (Human)',
-        'Fireworks': 'Accidental (Human)',
-        'Powerline': 'Accidental (Human)'
+        'Debris Burning': 'Debris Burning',
+        'Equipment Use': 'Infrastructure & Equip',
+        'Powerline': 'Infrastructure & Equip',
+        'Structure': 'Infrastructure & Equip',
+        'Railroad': 'Infrastructure & Equip',
+        'Campfire': 'Recreation & Negligence',
+        'Smoking': 'Recreation & Negligence',
+        'Children': 'Recreation & Negligence',
+        'Fireworks': 'Recreation & Negligence'
     }
     wf_df[target_col] = wf_df[target_col].map(cause_map)
-    wf_df = wf_df.dropna(subset=[target_col])
+    wf_df = wf_df.dropna(subset=[target_col]) 
     wf_df['MONTH'] = pd.to_datetime(
         wf_df['FIRE_YEAR'] * 1000 + wf_df['DISCOVERY_DOY'], 
         format='%Y%j'
     ).dt.month
+    
     storm_df['STATE'] = storm_df['STATE'].str.upper().map(STATE_MAP)
     month_map = {'January': 1, 'February': 2, 'March': 3, 'April': 4, 'May': 5, 'June': 6, 
                  'July': 7, 'August': 8, 'September': 9, 'October': 10, 'November': 11, 'December': 12}
     storm_df['MONTH'] = storm_df['MONTH_NAME'].str.title().map(month_map)
     storm_counts = storm_df.groupby(['STATE', 'YEAR', 'MONTH']).size().reset_index(name='MONTHLY_STORMS')
+    
     merged_df = pd.merge(
         wf_df, storm_counts, 
         left_on=['STATE', 'FIRE_YEAR', 'MONTH'], 
         right_on=['STATE', 'YEAR', 'MONTH'], 
         how='left'
     )
+    
     merged_df['MONTHLY_STORMS'] = merged_df['MONTHLY_STORMS'].fillna(0)
     merged_df['MONTH_SIN'] = np.sin(2 * np.pi * merged_df['MONTH'] / 12.0)
     merged_df['MONTH_COS'] = np.cos(2 * np.pi * merged_df['MONTH'] / 12.0)
     merged_df['LAT_ROUNDED'] = merged_df['LATITUDE'].round(1)
     merged_df['LON_ROUNDED'] = merged_df['LONGITUDE'].round(1)
     merged_df['LOG_FIRE_SIZE'] = np.log1p(merged_df['FIRE_SIZE'])
-    cols_to_drop = ['DISCOVERY_DOY', 'YEAR', 'FIRE_YEAR', 'LATITUDE', 'LONGITUDE', 'FIRE_SIZE']
-    merged_df = merged_df.drop(columns=cols_to_drop, errors='ignore')
-    return merged_df
-    )
-    merged_df['MONTHLY_STORMS'] = merged_df['MONTHLY_STORMS'].fillna(0)
-    merged_df['MONTH_SIN'] = np.sin(2 * np.pi * merged_df['MONTH'] / 12.0)
-    merged_df['MONTH_COS'] = np.cos(2 * np.pi * merged_df['MONTH'] / 12.0)
-    merged_df['LAT_ROUNDED'] = merged_df['LATITUDE'].round(1)
-    merged_df['LON_ROUNDED'] = merged_df['LONGITUDE'].round(1)
-    merged_df['LOG_FIRE_SIZE'] = np.log1p(merged_df['FIRE_SIZE'])
+    
     cols_to_drop = ['DISCOVERY_DOY', 'YEAR', 'FIRE_YEAR', 'LATITUDE', 'LONGITUDE', 'FIRE_SIZE']
     merged_df = merged_df.drop(columns=cols_to_drop, errors='ignore')
     
