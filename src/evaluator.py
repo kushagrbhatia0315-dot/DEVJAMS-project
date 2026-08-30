@@ -43,16 +43,19 @@ def evaluate_and_plot(y_test, predictions, save_path: str):
         color_continuous_scale='Teal',
         x=labels, 
         y=labels,
-        labels=dict(x="Predicted Cause", y="Actual Cause", color="Count")
+        labels=dict(color="Count") 
     )
-    
     fig.update_layout(
         title=dict(text="🎯 AI Prediction Confusion Matrix", font=dict(size=26, color='#102A43')),
         template="plotly_white",
-        plot_bgcolor='rgba(255,255,255,0.8)',
-        paper_bgcolor='rgba(255,255,255,0.8)',
-        margin=dict(l=40, r=40, t=80, b=40),
-        font=dict(size=14, color='black')
+        paper_bgcolor='rgba(0,0,0,0)', 
+        plot_bgcolor='white',          
+        xaxis_title=dict(text="Predicted Cause", font=dict(size=16, color='#102A43', weight='bold')),
+        yaxis_title=dict(text="Actual Cause", font=dict(size=16, color='#102A43', weight='bold')),
+        font=dict(size=15, color='#102A43'), 
+        height=700,
+        width=700,
+        margin=dict(l=40, r=40, t=80, b=40)
     )
     
     os.makedirs(os.path.dirname(save_path), exist_ok=True)
