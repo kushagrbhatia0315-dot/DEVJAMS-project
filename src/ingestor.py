@@ -10,11 +10,6 @@ def extract_wildfires(db_path: str, limit: int, features: list, target: str) -> 
     columns = ", ".join(features + [target])
     query = f"SELECT {columns} FROM Fires WHERE FIRE_YEAR >= 1996 ORDER BY RANDOM() LIMIT {limit};"
     with sqlite3.connect(db_path) as conn:
-        chunk_iterator = pd.read_sql_query(query, conn, chunksize=80000)
-        chunks = []
-        for i, chunk in enumerate(chunk_iterator):
-            print(f"    Loaded chunk {i + 1} (80,000 rows)...")
-            chunks.append(chunk)
         df = pd.read_sql_query(query, conn)
     print(f"    Successfully built dataset with {len(df)} wildfire records.")
     return df
