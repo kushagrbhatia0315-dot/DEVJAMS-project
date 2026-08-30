@@ -17,16 +17,6 @@ The project combines an automated ML pipeline, a **FastAPI** backend for serving
 
 ---
 
-## 🖥️ Demo
-
-*(Add a screenshot or GIF of the Streamlit dashboard / geographic map here)*
-
-```
-outputs/demo_screenshot.png
-```
-
----
-
 ## 🗂️ Project Structure
 
 ```
