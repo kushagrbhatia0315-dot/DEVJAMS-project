@@ -24,4 +24,4 @@ for root, dirs, files in os.walk(storms_path):
             shutil.copy(src, dst)
             count += 1
 print(f"-> Copied {count} storm CSV files into {target_dir}")
-print("Data setup is now complete. You can now run python app.py")
+print("Data setup is now complete. You can now run: streamlit run app.py")
