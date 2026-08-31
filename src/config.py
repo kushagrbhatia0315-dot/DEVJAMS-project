@@ -1,4 +1,4 @@
-import os 
+import os
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 WILDFIRE_DB = os.path.join(BASE_DIR, 'FPA_FOD_20170508.sqlite')
 STORMS_DIR = os.path.join(BASE_DIR, 'data', 'Storms 1996-2019') 
