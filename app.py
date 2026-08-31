@@ -10,7 +10,10 @@ from src.ingestor import extract_wildfires, extract_storms
 from src.engineer import merge_and_engineer, prepare_for_ml
 from src.modeler import train_and_predict, predict_fall_2026_scenario
 from src.evaluator import evaluate_and_plot, plot_wildfires_vs_storms_per_year, plot_us_disaster_map, create_gauge
+
 st.set_page_config(page_title="Wildfire & Storm Predictor", layout="wide", initial_sidebar_state="expanded")
+
+# ABSOLUTELY NO SPACES BEFORE <style>! This fixes the Markdown bug.
 st.markdown("""
 <style>
 /* Catchy Bright Gradient Background */
@@ -68,15 +71,19 @@ with st.sidebar:
     min_year = int(wf_df['FIRE_YEAR'].min())
     max_year = int(wf_df['FIRE_YEAR'].max())
     selected_year = st.slider("Select Timeline Year", min_value=min_year, max_value=max_year, value=max_year)
+    
     st.markdown("---")
     st.write("🔄 **System Status:** Active & Cached")
 
 st.title("🔥 US Disaster AI & Spatial Analytics")
 st.write("Visualizing the relationship between extreme weather and historical wildfire patterns in a vibrant workspace.")
+
 fires_this_year = len(wf_df[wf_df['FIRE_YEAR'] == selected_year])
 storms_this_year = len(storm_df[storm_df['YEAR'] == selected_year])
 max_fires = wf_df.groupby('FIRE_YEAR').size().max()
 max_storms = storm_df.groupby('YEAR').size().max()
+
+# --- ROW 1: The Core Stats ---
 col1, col2, col3 = st.columns(3)
 with col1:
     st.plotly_chart(create_gauge(fires_this_year, max_fires, "Total Wildfires", "#ff4b4b"), use_container_width=True)
@@ -84,6 +91,8 @@ with col2:
     st.plotly_chart(create_gauge(storms_this_year, max_storms, "Total Storms", "#17a3f4"), use_container_width=True)
 with col3:
     st.plotly_chart(create_gauge(metrics['accuracy'] * 100, 100, "Accuracy (%)", "#82ca9d"), use_container_width=True)
+
+# --- ROW 2: The Deep ML Metrics ---
 col4, col5, col6 = st.columns(3)
 with col4:
     st.plotly_chart(create_gauge(metrics['precision'] * 100, 100, "Precision (%)", "#8884d8"), use_container_width=True)
